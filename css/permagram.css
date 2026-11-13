@@ -108,13 +108,13 @@
 }
 
 .avatar-1 { background-image: linear-gradient(135deg, #ff9a9e, #fad0c4); }
-.avatar-2 { background-image: linear-gradient(135deg, #a18cd1, #fbc2eb); }
-.avatar-3 { background-image: linear-gradient(135deg, #84fab0, #8fd3f4); }
-.avatar-4 { background-image: linear-gradient(135deg, #f6d365, #fda085); }
-.avatar-5 { background-image: radial-gradient(circle at 30% 30%, #89f7fe, #66a6ff); }
-.avatar-6 { background-image: radial-gradient(circle at 30% 30%, #fddb92, #d1fdff); }
-.avatar-7 { background-image: linear-gradient(135deg, #0ba360, #3cba92); }
-.avatar-8 { background-image: radial-gradient(circle at 30% 30%, #f093fb, #f5576c); }
+.avatar-2 { background-image: url("https://i.pinimg.com/originals/0d/b9/48/0db9482f8a1db8325933d914f8c94fe7.png") }
+.avatar-3 { background-image: url("https://gqcanimes.com.br/wp-content/uploads/2020/03/Chi%E2%80%99s-Sweet-Home-GQCA-JBC.jpg") }
+.avatar-4 { background-image: url("https://images.hiwaifu.com/uploads/Api/robot_avatar/202602/50b01ca18456589f95651a56525f49aa.webp?image_process=resize,w_640") }
+.avatar-5 { background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQWsc29LEkW6YEx4a_mLe3PStZfnhwfbNfQA&s") }
+.avatar-6 { background-image: url("https://i.redd.it/04z0o4f6uujh1.png") }
+.avatar-7 { background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvPzMB9tuahdee1idkp5sm8tCcCt74qwTLw0O9is-KsW7r0PtPLrEAzls&s=10") }
+.avatar-8 { background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSYZX93yVSmT2eHFGJ5rnNct_sH-Pmrbnl9bLmr6maHZk98aYrOtBf5fd8M&s=10") }
 
 /* Listas laterais */
 .pg-lista { list-style: none; }

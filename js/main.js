@@ -141,6 +141,8 @@ function trocarTela(idTela, salvarHistorico = true) {
   else {
     const telaAlvo = document.getElementById(idTela);
     if (telaAlvo) telaAlvo.classList.add('active');
+    if (idTela === 'tela-permagram') renderizarPermagram();
+    if (idTela === 'tela-loja') renderizarLoja();
     atualizarBarraEndereco(idTela);
   }
 
@@ -174,6 +176,30 @@ function avancarPagina() {
   }
 }
 
+function irParaPermagram() { trocarTela('tela-permagram'); }
+
+function alternarMenuSites(evento) {
+  evento.stopPropagation();
+  const menu = document.getElementById('menu-sites');
+  menu.hidden = !menu.hidden;
+}
+
+function navegarParaSite(site) {
+  document.getElementById('menu-sites').hidden = true;
+  if (localStorage.getItem('usuarioLogado') === null) {
+    alert('Faça login para navegar entre os sites.');
+    return;
+  }
+  if (site === 'mercadoazul') irParaLoja();
+  else if (site === 'gugou') trocarTela('tela-home');
+  else if (site === 'permagram') irParaPermagram();
+  else alert('SuperFlix ainda está em construção!');
+}
+
+document.addEventListener('click', () => {
+  document.getElementById('menu-sites').hidden = true;
+});
+
 // ------------------------------------------------------------
 // RECARREGAR PÁGINA
 // ------------------------------------------------------------
@@ -203,6 +229,7 @@ function atualizarBarraEndereco(idTela) {
     case 'tela-busca': barra.value = "http://www.gugou.com.br/search"; break;
     case 'tela-creditos': barra.value = "http://www.retrocreditos.com.br"; break;
     case 'tela-loja': barra.value = "http://www.mercadoazul.com.br"; break;
+    case 'tela-permagram': barra.value = "http://www.permagram.com.br"; break;
   }
 }
 
@@ -283,6 +310,10 @@ function criarPerfilUsuario() {
     tokenizar(interacao.palavrasChave.join(' ')).forEach(token => {
       perfil.inserir(token, 'mercadoAzul', 1.0);
     });
+  });
+
+  obterInteressesPermagram().forEach(interesse => {
+    interesse.tokens.forEach(token => perfil.inserir(token, 'permagram', 1.1));
   });
 
   return perfil;

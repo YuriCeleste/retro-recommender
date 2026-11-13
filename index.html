@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Retro Recommender</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/permagram.css">
 </head>
 <body>
 
@@ -41,7 +42,16 @@
         <button class="nav-btn">⏹</button>
         <button class="nav-btn" onclick="recarregarPagina()">🔄</button>
         <label>Address:</label>
+        <div class="address-wrapper">
         <input type="text" id="address-bar" value="http://www.gugou.com.br" readonly>
+        <button class="nav-btn" onclick="alternarMenuSites(event)">▼</button>
+        <ul id="menu-sites" class="menu-sites" hidden>
+          <li onclick="navegarParaSite('mercadoazul')">mercadoazul.com.br</li>
+          <li onclick="navegarParaSite('superflix')">superflix.com.br</li>
+          <li onclick="navegarParaSite('gugou')">gugou.com.br</li>
+          <li onclick="navegarParaSite('permagram')">permagram.com.br</li>
+        </ul>
+      </div>
       </div>
 
       <!-- ÁREA DE CONTEÚDO -->
@@ -144,6 +154,12 @@
             <button class="btn-voltar" onclick="trocarTela('tela-home')">← Voltar para o Gugou</button>
           </div>
         </div>
+
+        <div id="tela-permagram" class="page">
+          <aside class="pg-col pg-col-perfil" id="pg-perfil"></aside>
+          <main class="pg-col pg-col-feed" id="pg-feed"></main>
+          <aside class="pg-col pg-col-sugestoes" id="pg-sugestoes"></aside>
+        </div>
         
       </div> <!-- Fim do browser-content -->
     </div> <!-- Fim do browser-window -->
@@ -154,6 +170,7 @@
   <script src="js/models/Trie.js"></script>
   <script src="js/tokenizer.js"></script>
   <script src="js/data/catalogo.js"></script>
+  <script src="js/permagram.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

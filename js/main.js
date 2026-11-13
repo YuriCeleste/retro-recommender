@@ -4,8 +4,50 @@
  * ============================================================
  */
 
-let historico = [];
-let indiceHistorico = -1;
+const CHAVES_DADOS = {
+  buscas: 'retroRecommender.buscas.v1',
+  produtos: 'retroRecommender.produtos.v1',
+  navegacao: 'retroRecommender.navegacao.v1'
+};
+
+function carregarListaSalva(chave) {
+  const dados = localStorage.getItem(chave);
+  if (dados === null) return [];
+
+  const lista = JSON.parse(dados);
+  if (!Array.isArray(lista)) {
+    throw new Error(`Os dados salvos em "${chave}" não estão no formato esperado.`);
+  }
+  return lista;
+}
+
+function carregarNavegacaoSalva() {
+  const dados = localStorage.getItem(CHAVES_DADOS.navegacao);
+  if (dados === null) return { historico: [], indice: -1 };
+
+  const navegacao = JSON.parse(dados);
+  if (!navegacao || !Array.isArray(navegacao.historico) ||
+      !Number.isInteger(navegacao.indice) ||
+      navegacao.indice < -1 ||
+      navegacao.indice >= navegacao.historico.length ||
+      navegacao.historico.some(item => !item || typeof item.tela !== 'string')) {
+    throw new Error('O histórico de navegação salvo está em um formato inválido.');
+  }
+  return navegacao;
+}
+
+function salvarNavegacao() {
+  localStorage.setItem(CHAVES_DADOS.navegacao, JSON.stringify({
+    historico,
+    indice: indiceHistorico
+  }));
+}
+
+let buscasSalvas = carregarListaSalva(CHAVES_DADOS.buscas);
+let produtosSalvos = carregarListaSalva(CHAVES_DADOS.produtos);
+const navegacaoSalva = carregarNavegacaoSalva();
+let historico = navegacaoSalva.historico;
+let indiceHistorico = navegacaoSalva.indice;
 let estaLogado = false;
 
 // ------------------------------------------------------------
@@ -15,8 +57,6 @@ function fazerLogout() {
   if (confirm("Deseja realmente sair do sistema?")) {
     localStorage.removeItem('usuarioLogado');
     estaLogado = false;
-    historico = [];
-    indiceHistorico = -1;
     trocarTela('tela-login');
   }
 }
@@ -56,9 +96,6 @@ function fazerLogin() {
     document.getElementById('login-user').value = "";
     document.getElementById('login-pass').value = "";
     
-    historico = [];
-    indiceHistorico = -1;
-    
     trocarTela('tela-home');
     alert("Login realizado com sucesso!");
   } else {
@@ -74,6 +111,13 @@ function trocarTela(idTela, salvarHistorico = true) {
 
   if (estaLogado && (idTela === 'tela-login' || idTela === 'tela-cadastro')) {
     return; 
+  }
+
+  if (idTela === 'tela-busca') {
+    const buscaAtual = salvarHistorico
+      ? buscasSalvas[buscasSalvas.length - 1]
+      : historico[indiceHistorico];
+    mostrarResultadosBusca(buscaAtual ? buscaAtual.termo : '');
   }
 
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -104,14 +148,20 @@ function trocarTela(idTela, salvarHistorico = true) {
     if (indiceHistorico < historico.length - 1) {
       historico = historico.slice(0, indiceHistorico + 1);
     }
-    historico.push({ tela: idTela });
+    const entradaHistorico = { tela: idTela, data: Date.now() };
+    if (idTela === 'tela-busca') {
+      entradaHistorico.termo = buscasSalvas[buscasSalvas.length - 1].termo;
+    }
+    historico.push(entradaHistorico);
     indiceHistorico = historico.length - 1;
+    salvarNavegacao();
   }
 }
 
 function voltarPagina() {
   if (indiceHistorico > 0) {
     indiceHistorico--;
+    salvarNavegacao();
     trocarTela(historico[indiceHistorico].tela, false);
   }
 }
@@ -119,6 +169,7 @@ function voltarPagina() {
 function avancarPagina() {
   if (indiceHistorico < historico.length - 1) {
     indiceHistorico++;
+    salvarNavegacao();
     trocarTela(historico[indiceHistorico].tela, false);
   }
 }
@@ -160,6 +211,16 @@ function irParaCreditos() { trocarTela('tela-creditos'); }
 function voltarLogin() { if (!estaLogado) trocarTela('tela-login'); }
 function voltarBusca() { trocarTela('tela-home'); }
 
+function mostrarResultadosBusca(termo) {
+  const termoMin = termo.toLowerCase();
+  const encontrouYuri = termoMin.includes("yuriceleste") || termoMin.includes("yuri");
+  const encontrouDayvson = termoMin.includes("dayvson") || termoMin.includes("devs097518");
+
+  document.getElementById('res-yuri').style.display = encontrouYuri ? "block" : "none";
+  document.getElementById('res-dayvson').style.display = encontrouDayvson ? "block" : "none";
+  return encontrouYuri || encontrouDayvson;
+}
+
 // ------------------------------------------------------------
 // E-COMMERCE (MERCADO AZUL)
 // ------------------------------------------------------------
@@ -174,13 +235,11 @@ function renderizarLoja() {
   
   grid.innerHTML = "";
 
-  const perfil = new Trie();
-  perfil.inserir("corrida", "gugou", 1.2);
-  perfil.inserir("tenis", "instagram", 1.0);
+  const perfil = criarPerfilUsuario();
 
   const recomendados = CATALOGO.map(produto => {
       let score = 0;
-      produto.palavrasChave.forEach(p => {
+      tokenizar(produto.palavrasChave.join(' ')).forEach(p => {
           const no = perfil.buscar(p);
           if (no) score += no.pesoTotal;
       });
@@ -200,43 +259,69 @@ function renderizarLoja() {
           <p class="preco">R$ ${prod.preco.toFixed(2)}</p>
           ${tagRecomendado}
       `;
+
+      const botaoInteresse = document.createElement('button');
+      botaoInteresse.className = 'btn-interesse';
+      botaoInteresse.type = 'button';
+      const interesseRegistrado = produtosSalvos.some(item => item.produtoId === prod.id);
+      botaoInteresse.textContent = interesseRegistrado ? 'Interesse registrado' : 'Tenho interesse';
+      botaoInteresse.disabled = interesseRegistrado;
+      botaoInteresse.addEventListener('click', () => registrarInteresseProduto(prod.id));
+      div.appendChild(botaoInteresse);
       grid.appendChild(div);
   });
+}
+
+function criarPerfilUsuario() {
+  const perfil = new Trie();
+
+  buscasSalvas.forEach(busca => {
+    busca.tokens.forEach(token => perfil.inserir(token, 'gugou', 1.2));
+  });
+
+  produtosSalvos.forEach(interacao => {
+    tokenizar(interacao.palavrasChave.join(' ')).forEach(token => {
+      perfil.inserir(token, 'mercadoAzul', 1.0);
+    });
+  });
+
+  return perfil;
+}
+
+function registrarInteresseProduto(produtoId) {
+  if (produtosSalvos.some(item => item.produtoId === produtoId)) return;
+
+  const produto = CATALOGO.find(item => item.id === produtoId);
+  if (!produto) throw new Error(`Produto não encontrado: ${produtoId}`);
+
+  produtosSalvos.push({
+    produtoId: produto.id,
+    palavrasChave: produto.palavrasChave,
+    data: Date.now()
+  });
+  localStorage.setItem(CHAVES_DADOS.produtos, JSON.stringify(produtosSalvos));
+  renderizarLoja();
 }
 
 // ------------------------------------------------------------
 // BUSCA NO GUGOU
 // ------------------------------------------------------------
 function fazerBusca() {
-  const termo = document.getElementById('search-input').value;
+  const termo = document.getElementById('search-input').value.trim();
   
-  if (termo.trim() === "") { alert("Digite algo para pesquisar!"); return; }
+  if (termo === "") { alert("Digite algo para pesquisar!"); return; }
 
   const tokens = tokenizar(termo);
-  
-  const minhaTrie = new Trie();
-  tokens.forEach(t => {
-    minhaTrie.inserir(t, 'gugou', 1.2);
-    console.log(`[TRIE] Inserido: ${t}`);
+  buscasSalvas.push({
+    termo,
+    tokens,
+    data: Date.now()
   });
+  localStorage.setItem(CHAVES_DADOS.buscas, JSON.stringify(buscasSalvas));
 
-  const termoMin = termo.toLowerCase();
-  let achou = false;
+  const minhaTrie = criarPerfilUsuario();
 
-  document.getElementById('res-yuri').style.display = "none";
-  document.getElementById('res-dayvson').style.display = "none";
-
-  if (termoMin.includes("yuriceleste") || termoMin.includes("yuri")) {
-    document.getElementById('res-yuri').style.display = "block";
-    achou = true;
-  }
-
-  if (termoMin.includes("dayvson") || termoMin.includes("devs097518")) {
-    document.getElementById('res-dayvson').style.display = "block";
-    achou = true;
-  }
-
-  if (achou) {
+  if (mostrarResultadosBusca(termo)) {
     trocarTela('tela-busca'); 
     document.getElementById('search-input').value = "";
     return;
@@ -266,14 +351,20 @@ document.addEventListener('keydown', function(event) {
 // ------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', function() {
   estaLogado = localStorage.getItem('usuarioLogado') !== null;
-  historico = [];
-  indiceHistorico = -1;
 
   // Garante que os produtos sejam renderizados caso o usuário vá direto para a loja
   renderizarLoja();
 
   if (estaLogado) {
-    trocarTela('tela-home');
+    const telaSalva = historico[indiceHistorico];
+    if (telaSalva) {
+      if (telaSalva.tela === 'tela-busca') {
+        mostrarResultadosBusca(telaSalva.termo || '');
+      }
+      trocarTela(telaSalva.tela, false);
+    } else {
+      trocarTela('tela-home');
+    }
   } else {
     trocarTela('tela-login');
   }

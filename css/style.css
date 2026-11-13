@@ -462,6 +462,22 @@ body {
   text-transform: uppercase;
 }
 
+.btn-interesse {
+  margin-top: 12px;
+  padding: 8px;
+  border: 1px solid #0000cc;
+  border-radius: 3px;
+  background-color: #0000EE;
+  color: #fff;
+  cursor: pointer;
+}
+
+.btn-interesse:disabled {
+  border-color: #888;
+  background-color: #888;
+  cursor: default;
+}
+
 .loja-footer {
   text-align: center;
   margin-top: 20px;

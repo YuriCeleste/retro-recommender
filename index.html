@@ -26,7 +26,7 @@
         </div>
       </div>
 
-      <!-- Menu do Navegador -->
+        <!-- Menu do Navegador -->
       <div class="browser-menu">
         <span>File</span>
         <span>Edit</span>
@@ -34,7 +34,9 @@
         <span onclick="irParaLoja()" style="cursor:pointer; font-weight:bold; color: #0000EE;">Mercado Azul</span>
         <span>Favorites</span>
         <span>Help</span>
-        <span onclick="fazerLogout()" style="cursor:pointer; color: #cc0000; font-weight: bold; margin-left: auto;">Sair</span>
+        <!-- BOTÃO DE TEMA -->
+        <span onclick="alternarTema()" style="cursor:pointer; font-weight: bold; color: #ffcc00; margin-left: auto;">🌓 Tema</span>
+        <span onclick="fazerLogout()" style="cursor:pointer; color: #cc0000; font-weight: bold; margin-left: 15px;">Sair</span>
       </div>
 
       <!-- Barra de Navegação (Endereço) -->
@@ -238,6 +240,30 @@
     </section>
   </div> <!-- Fim do desktop -->
 
+    <!-- FUNÇÕES DO TEMA ESCURO (Adicionado manualmente) -->
+  <script>
+    function alternarTema() {
+      const body = document.body;
+      const temaAtual = body.getAttribute('data-theme');
+      if (temaAtual === 'dark') {
+        body.removeAttribute('data-theme');
+        localStorage.setItem('tema', 'light');
+      } else {
+        body.setAttribute('data-theme', 'dark');
+        localStorage.setItem('tema', 'dark');
+      }
+    }
+
+    function aplicarTemaSalvo() {
+      const temaSalvo = localStorage.getItem('tema');
+      if (temaSalvo === 'dark') {
+        document.body.setAttribute('data-theme', 'dark');
+      }
+    }
+
+    // Aplica o tema assim que a página carrega
+    document.addEventListener('DOMContentLoaded', aplicarTemaSalvo);
+  </script>
   <!-- SCRIPTS DO PROJETO (ORDEM IMPORTA!) -->
   <script src="js/models/NoTrie.js"></script>
   <script src="js/models/Trie.js"></script>
@@ -248,5 +274,7 @@
   <script src="js/superflix.js"></script>
   <script src="js/loja.js"></script>
   <script src="js/main.js"></script>
+
+  
 </body>
 </html>

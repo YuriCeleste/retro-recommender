@@ -189,3 +189,163 @@
 
 .ml-btn-carrinho:hover:not(:disabled) { background-color: #b8c4ff; }
 .ml-btn-carrinho:disabled { cursor: default; color: #0a7a2f; font-weight: bold; }
+//* ============================================================
+   TEMA ESCURO - MERCADO AZUL (CORRIGIDO)
+   ============================================================ */
+
+/* Fundo geral da loja */
+body[data-theme="dark"] #tela-loja {
+  background-color: #0d1117;
+}
+
+/* --- HEADER --- */
+body[data-theme="dark"] .ml-header {
+  background-color: #161b22;
+  border-bottom: 1px solid #30363d;
+}
+
+body[data-theme="dark"] .ml-logo-pequeno {
+  color: #c9d1d9;
+}
+
+body[data-theme="dark"] .ml-logo-grande {
+  color: #58a6ff; /* Azul destaque */
+}
+
+body[data-theme="dark"] .ml-busca-box {
+  background-color: #21262d;
+  border-color: #30363d;
+}
+
+body[data-theme="dark"] .ml-busca-box input {
+  color: #c9d1d9;
+}
+
+body[data-theme="dark"] .ml-carrinho {
+  color: #ffcc00;
+  border-color: #ffcc00;
+}
+
+/* --- ABAS --- */
+body[data-theme="dark"] .ml-abas {
+  background-color: #161b22;
+}
+
+body[data-theme="dark"] .ml-aba {
+  background-color: #21262d;
+  color: #8b949e;
+}
+
+body[data-theme="dark"] .ml-aba.ativa {
+  background-color: #30363d;
+  color: #ffcc00;
+  font-weight: bold;
+}
+
+/* --- CARDS DOS PRODUTOS --- */
+body[data-theme="dark"] .ml-card {
+  background-color: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+/* NOME DO PRODUTO (Tarja escura + Dourado) */
+body[data-theme="dark"] .ml-nome {
+  background-color: #21262d;
+  color: #ffcc00 !important; /* Dourado */
+  font-weight: bold;
+  border-bottom: 1px solid #30363d;
+}
+
+/* IMAGEM DE FUNDO DO CARD (mantém as cores, mas com fundo escuro) */
+body[data-theme="dark"] .ml-imagem {
+  background-color: #0d1117;
+}
+
+/* DESCRIÇÃO "Combina com..." (DOURADO) */
+body[data-theme="dark"] .ml-combina {
+  color: #ffcc00 !important; /* Dourado */
+  font-weight: 500;
+  font-size: 11px;
+}
+
+/* PREÇO DO PRODUTO (DOURADO) */
+body[data-theme="dark"] .ml-preco {
+  background-color: #21262d !important; /* Fundo escuro */
+  color: #ffcc00 !important; /* Texto Dourado */
+  font-weight: bold;
+  border: 1px solid #30363d;
+}
+
+/* BOTÃO DO CARRINHO (DOURADO) */
+body[data-theme="dark"] .ml-btn-carrinho {
+  background-color: #21262d;
+  color: #ffcc00;
+  border: 1px solid #30363d;
+}
+
+body[data-theme="dark"] .ml-btn-carrinho:hover:not(:disabled) {
+  background-color: #ffcc00;
+  color: #000;
+}
+
+/* SELO "RECOMENDADO" (Mantém amarelo) */
+body[data-theme="dark"] .ml-badge {
+  background-color: #ffcc00;
+  color: #000;
+}
+/* ============================================================
+   FUNDO DA GRADE E DA TELA DA LOJA NO TEMA ESCURO
+   ============================================================ */
+body[data-theme="dark"] #tela-loja,
+body[data-theme="dark"] .ml-grid {
+  background-color: #12141a !important; /* Cor da imagem (cinza escuro azulado) */
+}
+/* ============================================================
+   CORREÇÃO DO LAYOUT DA LOJA (Grade e Cards)
+   ============================================================ */
+
+/* Força a tela da loja a não vazar horizontalmente */
+#tela-loja.active {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 0;
+  overflow-x: hidden; /* Esconde a barra de rolagem horizontal */
+  overflow-y: auto;   /* Permite rolagem vertical se precisar */
+  background-color: #fff;
+}
+
+/* Ajusta a grade para 4 colunas perfeitas e sem estourar */
+.ml-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)); /* O minmax(0, 1fr) força a coluna a não estourar */
+  gap: 18px;
+  padding: 20px 28px;
+  align-items: start;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Garante que o card não estique a imagem */
+.ml-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%; /* Ocupa 100% da coluna */
+  box-sizing: border-box;
+}
+
+.ml-imagem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  min-height: 120px;
+  max-height: 120px;
+  font-size: 48px;
+  background-size: cover;
+  background-position: center;
+}

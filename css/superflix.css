@@ -119,3 +119,45 @@
   font-size: 10px;
   font-weight: bold;
 }
+/* ============================================================
+   TEMA ESCURO - SUPERFLIX (Padrão Mercado Azul)
+   ============================================================ */
+
+/* Fundo da tela do SuperFlix */
+body[data-theme="dark"] #tela-superflix {
+  background-color: #12141a !important; /* Mesma cor do Mercado Azul */
+}
+
+/* Header (SuperFlix + Nome do Usuário) */
+body[data-theme="dark"] .sf-header {
+  background-color: #0d1117;
+  border-bottom: 1px solid #30363d;
+}
+
+body[data-theme="dark"] .sf-logo {
+  color: #e50914; /* Mantém o vermelho da Netflix */
+  text-shadow: 0 0 10px rgba(229, 9, 20, 0.5);
+}
+
+body[data-theme="dark"] .sf-usuario {
+  color: #c9d1d9;
+}
+
+/* Títulos das seções ("Em cartaz", "Minha lista de desejos") */
+body[data-theme="dark"] .sf-secao h3 {
+  color: #ffcc00 !important; /* Dourado para combinar */
+}
+
+/* Nomes dos filmes (as caixinhas cinzas) */
+body[data-theme="dark"] .sf-card-titulo,
+body[data-theme="dark"] .sf-titulo {
+  background-color: #21262d !important; /* Fundo escuro */
+  color: #ffcc00 !important; /* Texto Dourado */
+  border-bottom: 1px solid #30363d;
+}
+
+/* Opcional: Se os cards de filme tiverem um fundo */
+body[data-theme="dark"] .sf-card {
+  background-color: #161b22;
+  border: 1px solid #30363d;
+}

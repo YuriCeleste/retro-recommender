@@ -214,3 +214,66 @@
   cursor: pointer;
   font-weight: bold;
 }
+/* ============================================================
+   TEMA ESCURO DO PERMAGRAM
+   ============================================================ */
+body[data-theme="dark"] #tela-permagram {
+  background-color: #161b22;
+  color: #c9d1d9;
+}
+
+body[data-theme="dark"] .pg-col {
+  border-color: #30363d;
+}
+
+body[data-theme="dark"] .pg-col-feed {
+  background-color: #0d1117;
+}
+
+body[data-theme="dark"] .pg-composer {
+  background-color: #21262d;
+}
+
+body[data-theme="dark"] .pg-composer textarea {
+  background-color: #0d1117;
+  color: #c9d1d9;
+  border-color: #30363d;
+}
+
+body[data-theme="dark"] .pg-post {
+  background-color: #21262d;
+}
+
+body[data-theme="dark"] .pg-post-nome {
+  color: #58a6ff;
+}
+
+body[data-theme="dark"] .pg-post-texto {
+  color: #c9d1d9;
+}
+
+body[data-theme="dark"] .pg-nick {
+  color: #58a6ff;
+}
+
+body[data-theme="dark"] .pg-subtitulo {
+  color: #8b949e;
+}
+
+body[data-theme="dark"] .pg-vazio {
+  color: #8b949e;
+}
+
+body[data-theme="dark"] .pg-item-nome {
+  color: #c9d1d9;
+}
+
+body[data-theme="dark"] .pg-btn {
+  background-color: #21262d;
+  border-color: #30363d;
+  color: #c9d1d9;
+}
+
+body[data-theme="dark"] .pg-btn-seguir.seguindo {
+  background-color: #3b1e1e;
+}

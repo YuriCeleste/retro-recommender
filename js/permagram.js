@@ -81,6 +81,11 @@ function desativarEstadoPermagram() {
   estadoPermagram = novoEstadoPermagram();
 }
 
+function limparEstadoPermagram() {
+  estadoPermagram = novoEstadoPermagram();
+  salvarEstadoPermagram();
+}
+
 function nickPermagram() {
   return '@' + (localStorage.getItem('usuarioLogado') || 'visitante');
 }

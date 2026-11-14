@@ -49,6 +49,11 @@ function desativarEstadoSuperflix() {
   estadoSuperflix = { desejos: [], interesses: [] };
 }
 
+function limparEstadoSuperflix() {
+  estadoSuperflix = { desejos: [], interesses: [] };
+  salvarEstadoSuperflix();
+}
+
 function estaNaListaDesejos(idFilme) {
   return estadoSuperflix.desejos.some(d => d.id === idFilme);
 }

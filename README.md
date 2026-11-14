@@ -5,4 +5,6 @@ Contas, pesquisas, interesses registrados nos produtos, histórico de navegaçã
 
 Na loja, use **Tenho interesse** para registrar um produto e incluí-lo no perfil usado pelas recomendações.
 
+Use o botão 🧹 em cada site simulado para apagar os dados daquele site e remover seus interesses da árvore Trie.
+
 Esta autenticação é apenas demonstrativa: as contas e senhas ficam no navegador e não devem ser usadas para proteger dados reais.

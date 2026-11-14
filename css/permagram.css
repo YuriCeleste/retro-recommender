@@ -46,6 +46,13 @@
   background-color: #fff;
 }
 
+#tela-permagram > .btn-limpar-site {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+}
+
 .pg-col {
   overflow-y: auto;
   padding: 15px;

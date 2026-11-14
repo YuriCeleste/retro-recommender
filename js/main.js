@@ -61,6 +61,19 @@ function salvarNavegacao() {
   localStorage.setItem(chaveDadosUsuario(CHAVES_DADOS.navegacao), JSON.stringify({ historico, indice: indiceHistorico }));
 }
 
+const TELAS_POR_SITE = {
+  gugou: ['tela-home', 'tela-busca'],
+  mercadoAzul: ['tela-loja'],
+  permagram: ['tela-permagram'],
+  superflix: ['tela-superflix']
+};
+const NOMES_SITES = {
+  gugou: 'Gugou',
+  mercadoAzul: 'Mercado Azul',
+  permagram: 'Permagram',
+  superflix: 'SuperFlix'
+};
+
 let buscasSalvas = [];
 let buscasLojaSalvas = [];
 let produtosSalvos = [];
@@ -325,6 +338,40 @@ function fazerBusca() {
   }
   alert(`Pesquisa: "${termo}"\nTokens: ${tokens.join(", ")}`);
   document.getElementById('search-input').value = "";
+}
+
+function limparDadosSite(site) {
+  if (!Object.prototype.hasOwnProperty.call(TELAS_POR_SITE, site)) {
+    throw new Error(`Site inválido para limpeza: ${site}`);
+  }
+  if (!confirm(`Deseja apagar todos os dados do ${NOMES_SITES[site]}?`)) return;
+
+  const telasRemovidas = new Set(TELAS_POR_SITE[site]);
+  const historicoAteIndice = historico.slice(0, indiceHistorico + 1);
+  historico = historico.filter(item => !telasRemovidas.has(item.tela));
+  indiceHistorico = historicoAteIndice.filter(item => !telasRemovidas.has(item.tela)).length - 1;
+
+  if (site === 'gugou') {
+    buscasSalvas = [];
+    localStorage.setItem(chaveDadosUsuario(CHAVES_DADOS.buscas), JSON.stringify(buscasSalvas));
+    document.getElementById('search-input').value = '';
+    document.getElementById('res-yuri').style.display = 'none';
+    document.getElementById('res-dayvson').style.display = 'none';
+  } else if (site === 'mercadoAzul') {
+    produtosSalvos = [];
+    buscasLojaSalvas = [];
+    localStorage.setItem(chaveDadosUsuario(CHAVES_DADOS.produtos), JSON.stringify(produtosSalvos));
+    localStorage.setItem(chaveDadosUsuario(CHAVES_DADOS.buscasLoja), JSON.stringify(buscasLojaSalvas));
+    document.getElementById('ml-busca').value = '';
+    abaLoja = 'recomendados';
+  } else if (site === 'permagram') {
+    limparEstadoPermagram();
+  } else if (site === 'superflix') {
+    limparEstadoSuperflix();
+  }
+
+  trocarTela(TELAS_POR_SITE[site][0]);
+  atualizarArvorePerfilSeVisivel();
 }
 
 // PAINEL DA ÁRVORE (mantido do parceiro)

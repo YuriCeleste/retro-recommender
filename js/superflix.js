@@ -25,7 +25,7 @@ const FILMES_SUPERFLIX = [
 // ESTADO (persistido no localStorage)
 // ------------------------------------------------------------
 function carregarEstadoSuperflix() {
-  const dados = localStorage.getItem(CHAVE_SUPERFLIX);
+  const dados = localStorage.getItem(chaveDadosUsuario(CHAVE_SUPERFLIX));
   if (dados === null) return { desejos: [], interesses: [] };
 
   const estado = JSON.parse(dados);
@@ -35,10 +35,18 @@ function carregarEstadoSuperflix() {
   return estado;
 }
 
-let estadoSuperflix = carregarEstadoSuperflix();
+let estadoSuperflix = { desejos: [], interesses: [] };
 
 function salvarEstadoSuperflix() {
-  localStorage.setItem(CHAVE_SUPERFLIX, JSON.stringify(estadoSuperflix));
+  localStorage.setItem(chaveDadosUsuario(CHAVE_SUPERFLIX), JSON.stringify(estadoSuperflix));
+}
+
+function ativarEstadoSuperflix() {
+  estadoSuperflix = carregarEstadoSuperflix();
+}
+
+function desativarEstadoSuperflix() {
+  estadoSuperflix = { desejos: [], interesses: [] };
 }
 
 function estaNaListaDesejos(idFilme) {

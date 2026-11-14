@@ -10,8 +10,37 @@ const CHAVES_DADOS = {
   navegacao: 'retroRecommender.navegacao.v1'
 };
 
+const CHAVE_CONTAS = 'retroRecommender.contas.v1';
+
+function salvarContasUsuario(contas) {
+  localStorage.setItem(CHAVE_CONTAS, JSON.stringify(contas));
+}
+
+function carregarContasUsuario() {
+  const dados = localStorage.getItem(CHAVE_CONTAS);
+  if (dados !== null) {
+    const contas = JSON.parse(dados);
+    if (!Array.isArray(contas) ||
+        contas.some(conta => !conta || typeof conta.usuario !== 'string' ||
+          typeof conta.senha !== 'string')) {
+      throw new Error('As contas salvas estão em um formato inválido.');
+    }
+    return contas;
+  }
+
+  const usuarioLegado = localStorage.getItem('contaUsuario');
+  const senhaLegada = localStorage.getItem('contaSenha');
+  if (usuarioLegado === null || senhaLegada === null) return [];
+
+  const contas = [{ usuario: usuarioLegado, senha: senhaLegada }];
+  salvarContasUsuario(contas);
+  return contas;
+}
+
+let contasUsuario = carregarContasUsuario();
+
 function carregarListaSalva(chave) {
-  const dados = localStorage.getItem(chave);
+  const dados = localStorage.getItem(chaveDadosUsuario(chave));
   if (dados === null) return [];
 
   const lista = JSON.parse(dados);
@@ -22,7 +51,7 @@ function carregarListaSalva(chave) {
 }
 
 function carregarNavegacaoSalva() {
-  const dados = localStorage.getItem(CHAVES_DADOS.navegacao);
+  const dados = localStorage.getItem(chaveDadosUsuario(CHAVES_DADOS.navegacao));
   if (dados === null) return { historico: [], indice: -1 };
 
   const navegacao = JSON.parse(dados);
@@ -37,18 +66,40 @@ function carregarNavegacaoSalva() {
 }
 
 function salvarNavegacao() {
-  localStorage.setItem(CHAVES_DADOS.navegacao, JSON.stringify({
+  localStorage.setItem(chaveDadosUsuario(CHAVES_DADOS.navegacao), JSON.stringify({
     historico,
     indice: indiceHistorico
   }));
 }
 
-let buscasSalvas = carregarListaSalva(CHAVES_DADOS.buscas);
-let produtosSalvos = carregarListaSalva(CHAVES_DADOS.produtos);
-const navegacaoSalva = carregarNavegacaoSalva();
-let historico = navegacaoSalva.historico;
-let indiceHistorico = navegacaoSalva.indice;
+let buscasSalvas = [];
+let produtosSalvos = [];
+let historico = [];
+let indiceHistorico = -1;
 let estaLogado = false;
+
+function ativarDadosUsuario(usuario) {
+  ativarEscopoDadosUsuario(usuario);
+  migrarDadosLegadosUsuario(usuario);
+
+  buscasSalvas = carregarListaSalva(CHAVES_DADOS.buscas);
+  produtosSalvos = carregarListaSalva(CHAVES_DADOS.produtos);
+  const navegacaoSalva = carregarNavegacaoSalva();
+  historico = navegacaoSalva.historico;
+  indiceHistorico = navegacaoSalva.indice;
+  ativarEstadoPermagram();
+  ativarEstadoSuperflix();
+}
+
+function limparDadosUsuario() {
+  buscasSalvas = [];
+  produtosSalvos = [];
+  historico = [];
+  indiceHistorico = -1;
+  desativarEstadoPermagram();
+  desativarEstadoSuperflix();
+  desativarEscopoDadosUsuario();
+}
 
 // ------------------------------------------------------------
 // LOGIN, CADASTRO E LOGOUT
@@ -57,6 +108,7 @@ function fazerLogout() {
   if (confirm("Deseja realmente sair do sistema?")) {
     localStorage.removeItem('usuarioLogado');
     estaLogado = false;
+    limparDadosUsuario();
     trocarTela('tela-login');
   }
 }
@@ -65,9 +117,14 @@ function fazerCadastro() {
   const user = document.getElementById('cad-user').value.trim();
   const pass = document.getElementById('cad-pass').value.trim();
   if (user === "" || pass === "") { alert("Preencha todos os campos!"); return; }
-  
-  localStorage.setItem('contaUsuario', user);
-  localStorage.setItem('contaSenha', pass);
+
+  if (contasUsuario.some(conta => conta.usuario === user)) {
+    alert("Este usuário já existe. Escolha outro nome.");
+    return;
+  }
+
+  contasUsuario.push({ usuario: user, senha: pass });
+  salvarContasUsuario(contasUsuario);
   alert("Conta criada! Faça o login.");
   
   document.getElementById('cad-user').value = "";
@@ -81,16 +138,15 @@ function fazerLogin() {
   
   if (user === "" || pass === "") { alert("Preencha usuário e senha!"); return; }
 
-  const contaUser = localStorage.getItem('contaUsuario');
-  const contaPass = localStorage.getItem('contaSenha');
-
-  if (contaUser === null) {
+  if (contasUsuario.length === 0) {
     alert("Nenhuma conta encontrada! Crie uma conta primeiro.");
     return;
   }
 
-  if (user === contaUser && pass === contaPass) {
+  const conta = contasUsuario.find(item => item.usuario === user && item.senha === pass);
+  if (conta) {
     localStorage.setItem('usuarioLogado', user);
+    ativarDadosUsuario(user);
     estaLogado = true;
     
     document.getElementById('login-user').value = "";
@@ -338,7 +394,7 @@ function registrarInteresseProduto(produtoId) {
     palavrasChave: produto.palavrasChave,
     data: Date.now()
   });
-  localStorage.setItem(CHAVES_DADOS.produtos, JSON.stringify(produtosSalvos));
+  localStorage.setItem(chaveDadosUsuario(CHAVES_DADOS.produtos), JSON.stringify(produtosSalvos));
   renderizarLoja();
 }
 
@@ -356,7 +412,7 @@ function fazerBusca() {
     tokens,
     data: Date.now()
   });
-  localStorage.setItem(CHAVES_DADOS.buscas, JSON.stringify(buscasSalvas));
+  localStorage.setItem(chaveDadosUsuario(CHAVES_DADOS.buscas), JSON.stringify(buscasSalvas));
 
   const minhaTrie = criarPerfilUsuario();
 
@@ -389,12 +445,11 @@ document.addEventListener('keydown', function(event) {
 // INICIALIZAÇÃO
 // ------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', function() {
-  estaLogado = localStorage.getItem('usuarioLogado') !== null;
-
-  // Garante que os produtos sejam renderizados caso o usuário vá direto para a loja
-  renderizarLoja();
-
-  if (estaLogado) {
+  const usuarioLogado = localStorage.getItem('usuarioLogado');
+  const contaLogada = contasUsuario.find(conta => conta.usuario === usuarioLogado);
+  if (contaLogada) {
+    ativarDadosUsuario(usuarioLogado);
+    estaLogado = true;
     const telaSalva = historico[indiceHistorico];
     if (telaSalva) {
       if (telaSalva.tela === 'tela-busca') {
@@ -405,6 +460,7 @@ document.addEventListener('DOMContentLoaded', function() {
       trocarTela('tela-home');
     }
   } else {
+    localStorage.removeItem('usuarioLogado');
     trocarTela('tela-login');
   }
 });

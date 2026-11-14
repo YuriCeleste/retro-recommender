@@ -41,15 +41,19 @@ const USUARIOS_PERMAGRAM = [
 // ------------------------------------------------------------
 // ESTADO (persistido no localStorage)
 // ------------------------------------------------------------
+function novoEstadoPermagram() {
+  return {
+    avatar: 1 + Math.floor(Math.random() * TOTAL_AVATARES),
+    postagens: [],
+    seguindo: [],
+    interesses: []
+  };
+}
+
 function carregarEstadoPermagram() {
-  const dados = localStorage.getItem(CHAVE_PERMAGRAM);
+  const dados = localStorage.getItem(chaveDadosUsuario(CHAVE_PERMAGRAM));
   if (dados === null) {
-    return {
-      avatar: 1 + Math.floor(Math.random() * TOTAL_AVATARES),
-      postagens: [],   // { id, texto, data }
-      seguindo: [],    // { id, desde }
-      interesses: []   // { id, tokens, data } -> alimenta a Trie do perfil
-    };
+    return novoEstadoPermagram();
   }
 
   const estado = JSON.parse(dados);
@@ -62,14 +66,20 @@ function carregarEstadoPermagram() {
   return estado;
 }
 
-let estadoPermagram = carregarEstadoPermagram();
+let estadoPermagram = novoEstadoPermagram();
 
 function salvarEstadoPermagram() {
-  localStorage.setItem(CHAVE_PERMAGRAM, JSON.stringify(estadoPermagram));
+  localStorage.setItem(chaveDadosUsuario(CHAVE_PERMAGRAM), JSON.stringify(estadoPermagram));
 }
 
-// Garante que o avatar aleatório sorteado na primeira visita fique salvo
-salvarEstadoPermagram();
+function ativarEstadoPermagram() {
+  estadoPermagram = carregarEstadoPermagram();
+  salvarEstadoPermagram();
+}
+
+function desativarEstadoPermagram() {
+  estadoPermagram = novoEstadoPermagram();
+}
 
 function nickPermagram() {
   return '@' + (localStorage.getItem('usuarioLogado') || 'visitante');

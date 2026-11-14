@@ -143,6 +143,7 @@ function trocarTela(idTela, salvarHistorico = true) {
     if (telaAlvo) telaAlvo.classList.add('active');
     if (idTela === 'tela-permagram') renderizarPermagram();
     if (idTela === 'tela-loja') renderizarLoja();
+    if (idTela === 'tela-superflix') renderizarSuperflix();
     atualizarBarraEndereco(idTela);
   }
 
@@ -178,6 +179,8 @@ function avancarPagina() {
 
 function irParaPermagram() { trocarTela('tela-permagram'); }
 
+function irParaSuperflix() { trocarTela('tela-superflix'); }
+
 function alternarMenuSites(evento) {
   evento.stopPropagation();
   const menu = document.getElementById('menu-sites');
@@ -193,7 +196,7 @@ function navegarParaSite(site) {
   if (site === 'mercadoazul') irParaLoja();
   else if (site === 'gugou') trocarTela('tela-home');
   else if (site === 'permagram') irParaPermagram();
-  else alert('SuperFlix ainda está em construção!');
+  else if (site === 'superflix') irParaSuperflix();
 }
 
 document.addEventListener('click', () => {
@@ -230,6 +233,7 @@ function atualizarBarraEndereco(idTela) {
     case 'tela-creditos': barra.value = "http://www.retrocreditos.com.br"; break;
     case 'tela-loja': barra.value = "http://www.mercadoazul.com.br"; break;
     case 'tela-permagram': barra.value = "http://www.permagram.com.br"; break;
+    case 'tela-superflix': barra.value = "http://www.superflix.com.br"; break;
   }
 }
 
@@ -314,6 +318,10 @@ function criarPerfilUsuario() {
 
   obterInteressesPermagram().forEach(interesse => {
     interesse.tokens.forEach(token => perfil.inserir(token, 'permagram', 1.1));
+  });
+
+  obterInteressesSuperflix().forEach(interesse => {
+    interesse.tokens.forEach(token => perfil.inserir(token, 'superflix', 1.0));
   });
 
   return perfil;

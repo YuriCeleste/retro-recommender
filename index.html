@@ -6,6 +6,7 @@
   <title>Retro Recommender</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/permagram.css">
+  <link rel="stylesheet" href="css/superflix.css">
 </head>
 <body>
 
@@ -160,6 +161,21 @@
           <main class="pg-col pg-col-feed" id="pg-feed"></main>
           <aside class="pg-col pg-col-sugestoes" id="pg-sugestoes"></aside>
         </div>
+
+        <div id="tela-superflix" class="page">
+          <header class="sf-header">
+            <span class="sf-logo">SuperFlix</span>
+            <span class="sf-usuario" id="sf-usuario">nome_do_usuário</span>
+          </header>
+          <section class="sf-secao">
+            <h3>Em cartaz</h3>
+            <div class="sf-grid" id="sf-grid"></div>
+          </section>
+          <section class="sf-secao">
+            <h3 id="sf-titulo-lista">Minha lista de desejos (0)</h3>
+            <div class="sf-grid" id="sf-lista"></div>
+          </section>
+        </div>
         
       </div> <!-- Fim do browser-content -->
     </div> <!-- Fim do browser-window -->
@@ -171,6 +187,7 @@
   <script src="js/tokenizer.js"></script>
   <script src="js/data/catalogo.js"></script>
   <script src="js/permagram.js"></script>
+  <script src="js/superflix.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

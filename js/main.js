@@ -273,37 +273,6 @@ function mostrarResultadosBusca(termo) {
 // E-COMMERCE (MERCADO AZUL)
 function irParaLoja() { trocarTela('tela-loja'); }
 
-// function renderizarLoja() {
-//   const grid = document.getElementById('grid-produtos');
-//   if (!grid) return;
-//   grid.innerHTML = "";
-//   const perfil = criarPerfilUsuario();
-//   const recomendados = CATALOGO.map(produto => {
-//       let score = 0;
-//       tokenizar(produto.palavrasChave.join(' ')).forEach(p => {
-//           const no = perfil.buscar(p);
-//           if (no) score += no.pesoTotal;
-//       });
-//       return { ...produto, score };
-//   }).sort((a, b) => b.score - a.score);
-
-//   recomendados.forEach(prod => {
-//       const div = document.createElement('div');
-//       div.className = 'card-produto';
-//       const tagRecomendado = prod.score > 0 ? '<div class="badge-recomendacao">⭐ Recomendado</div>' : '';
-//       div.innerHTML = `<h3>${prod.nome}</h3><p class="preco">R$ ${prod.preco.toFixed(2)}</p>${tagRecomendado}`;
-//       const botaoInteresse = document.createElement('button');
-//       botaoInteresse.className = 'btn-interesse';
-//       botaoInteresse.type = 'button';
-//       const interesseRegistrado = produtosSalvos.some(item => item.produtoId === prod.id);
-//       botaoInteresse.textContent = interesseRegistrado ? 'Interesse registrado' : 'Tenho interesse';
-//       botaoInteresse.disabled = interesseRegistrado;
-//       botaoInteresse.addEventListener('click', () => registrarInteresseProduto(prod.id));
-//       div.appendChild(botaoInteresse);
-//       grid.appendChild(div);
-//   });
-// }
-
 function criarPerfilUsuario() {
   const perfil = new Trie();
   buscasSalvas.forEach(busca => { busca.tokens.forEach(token => perfil.inserir(token, 'gugou', 1.2)); });
@@ -313,15 +282,6 @@ function criarPerfilUsuario() {
   obterInteressesSuperflix().forEach(interesse => { interesse.tokens.forEach(token => perfil.inserir(token, 'superflix', 1.0)); });
   return perfil;
 }
-
-// function registrarInteresseProduto(produtoId) {
-//   if (produtosSalvos.some(item => item.produtoId === produtoId)) return;
-//   const produto = CATALOGO.find(item => item.id === produtoId);
-//   if (!produto) throw new Error(`Produto não encontrado: ${produtoId}`);
-//   produtosSalvos.push({ produtoId: produto.id, palavrasChave: produto.palavrasChave, data: Date.now() });
-//   localStorage.setItem(chaveDadosUsuario(CHAVES_DADOS.produtos), JSON.stringify(produtosSalvos));
-//   renderizarLoja();
-// }
 
 // BUSCA NO GUGOU
 function fazerBusca() {
@@ -526,19 +486,84 @@ function renderizarArvorePerfil() {
 
 // ATALHOS DE TECLADO
 document.addEventListener('keydown', function(event) {
-  
   if (event.key === 'Escape' && !document.getElementById('painel-arvore-perfil').hidden) fecharPainelArvore();
-  else if (!digitando && event.key === 'ArrowLeft') voltarPagina();
-  else if (!digitando && event.key === 'ArrowRight') avancarPagina();
+  else if (event.key === 'ArrowLeft' && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) voltarPagina();
+  else if (event.key === 'ArrowRight' && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) avancarPagina();
   else if (event.key === 'Enter') {
     const inputBusca = document.getElementById('search-input');
-    const digitando = ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName);
-    if (document.activeElement === inputBusca && digitando) fazerBusca();
+    if (document.activeElement === inputBusca) fazerBusca();
   }
 });
 
+// ============================================================
+// CONTROLE DE WALLPAPER
+// ============================================================
+function abrirModalWallpaper() {
+  document.getElementById('modal-wallpaper').classList.add('ativo');
+}
+
+function fecharModalWallpaper() {
+  document.getElementById('modal-wallpaper').classList.remove('ativo');
+}
+
+function aplicarWallpaper(nomeArquivo, local) {
+  if (local === 'desktop') {
+    const desktop = document.querySelector('.desktop');
+    desktop.style.backgroundImage = `url('assets/${nomeArquivo}')`;
+    localStorage.setItem('wallpaperDesktop', nomeArquivo);
+  } else if (local === 'sistema') {
+    const browserContent = document.getElementById('browser-content');
+    browserContent.style.backgroundImage = `url('assets/${nomeArquivo}')`;
+    browserContent.style.backgroundSize = 'cover';
+    browserContent.style.backgroundPosition = 'center';
+    localStorage.setItem('wallpaperSistema', nomeArquivo);
+  }
+  fecharModalWallpaper();
+}
+
+function carregarWallpaperSalvo() {
+  const wallpaperDesktop = localStorage.getItem('wallpaperDesktop');
+  if (wallpaperDesktop) {
+    document.querySelector('.desktop').style.backgroundImage = `url('assets/${wallpaperDesktop}')`;
+  }
+  
+  const wallpaperSistema = localStorage.getItem('wallpaperSistema');
+  if (wallpaperSistema) {
+    const browserContent = document.getElementById('browser-content');
+    browserContent.style.backgroundImage = `url('assets/${wallpaperSistema}')`;
+    browserContent.style.backgroundSize = 'cover';
+    browserContent.style.backgroundPosition = 'center';
+  }
+}
+
+// ============================================================
+// TEMA ESCURO
+// ============================================================
+function alternarTema() {
+  const body = document.body;
+  const temaAtual = body.getAttribute('data-theme');
+  
+  if (temaAtual === 'dark') {
+    body.removeAttribute('data-theme');
+    localStorage.setItem('tema', 'light');
+  } else {
+    body.setAttribute('data-theme', 'dark');
+    localStorage.setItem('tema', 'dark');
+  }
+}
+
+function aplicarTemaSalvo() {
+  const temaSalvo = localStorage.getItem('tema');
+  if (temaSalvo === 'dark') {
+    document.body.setAttribute('data-theme', 'dark');
+  }
+}
+
 // INICIALIZAÇÃO
 document.addEventListener('DOMContentLoaded', function() {
+  aplicarTemaSalvo();
+  carregarWallpaperSalvo();
+
   const usuarioLogado = localStorage.getItem('usuarioLogado');
   const contaLogada = contasUsuario.find(conta => conta.usuario === usuarioLogado);
   if (contaLogada) {

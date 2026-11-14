@@ -26,7 +26,7 @@
         </div>
       </div>
 
-        <!-- Menu do Navegador -->
+      <!-- Menu do Navegador -->
       <div class="browser-menu">
         <span>File</span>
         <span>Edit</span>
@@ -34,7 +34,6 @@
         <span onclick="irParaLoja()" style="cursor:pointer; font-weight:bold; color: #0000EE;">Mercado Azul</span>
         <span>Favorites</span>
         <span>Help</span>
-        <!-- BOTÃO DE TEMA -->
         <span onclick="alternarTema()" style="cursor:pointer; font-weight: bold; color: #ffcc00; margin-left: auto;">🌓 Tema</span>
         <span onclick="fazerLogout()" style="cursor:pointer; color: #cc0000; font-weight: bold; margin-left: 15px;">Sair</span>
       </div>
@@ -43,7 +42,7 @@
       <div class="browser-nav">
         <button class="nav-btn" onclick="voltarPagina()">⬅</button>
         <button class="nav-btn" onclick="avancarPagina()">➡</button>
-        <button class="nav-btn">⏹</button>
+        <button class="nav-btn" onclick="abrirModalWallpaper()">⏹</button>
         <button class="nav-btn" onclick="recarregarPagina()">🔄</button>
         <label>Address:</label>
         <div class="address-wrapper">
@@ -118,7 +117,6 @@
             <p class="gugou-footer">Pesquise qualquer coisa. Nós sabemos o que você quer.</p>
           </div>
 
-          <!-- Área de Resultados -->
           <div id="resultados-busca" class="resultados-container">
             <div id="res-yuri" class="resultado-item" style="display: none;">
               <h3>Yuri Calixto (YuriCeleste) - GitHub</h3>
@@ -147,7 +145,7 @@
           </div>
         </div>
 
-        <!-- TELA 5: E-COMMERCE (MERCADO AZUL) - NOVO VISUAL -->
+        <!-- TELA 5: E-COMMERCE (MERCADO AZUL) -->
         <div id="tela-loja" class="page">
           <header class="ml-header">
             <div class="ml-logo">
@@ -169,6 +167,7 @@
           <div class="ml-grid" id="ml-grid"></div>
         </div>
 
+        <!-- TELA 6: PERMAGRAM -->
         <div id="tela-permagram" class="page">
           <button type="button" class="btn-limpar-site" aria-label="Limpar dados do Permagram"
             title="Limpar dados do Permagram" onclick="limparDadosSite('permagram')">🧹</button>
@@ -177,6 +176,7 @@
           <aside class="pg-col pg-col-sugestoes" id="pg-sugestoes"></aside>
         </div>
 
+        <!-- TELA 7: SUPERFLIX -->
         <div id="tela-superflix" class="page">
           <header class="sf-header">
             <span class="sf-logo">SuperFlix</span>
@@ -196,6 +196,8 @@
         
       </div> <!-- Fim do browser-content -->
     </div> <!-- Fim do browser-window -->
+
+    <!-- Painel da Árvore da Trie -->
     <div id="arvore-backdrop" class="arvore-backdrop" onclick="fecharPainelArvore()" hidden></div>
     <button id="btn-arvore-perfil" type="button" aria-label="Abrir árvore do perfil" title="Árvore do perfil"
       aria-controls="painel-arvore-perfil" aria-expanded="false" onclick="alternarPainelArvore()" hidden>
@@ -240,31 +242,43 @@
     </section>
   </div> <!-- Fim do desktop -->
 
-    <!-- FUNÇÕES DO TEMA ESCURO (Adicionado manualmente) -->
-  <script>
-    function alternarTema() {
-      const body = document.body;
-      const temaAtual = body.getAttribute('data-theme');
-      if (temaAtual === 'dark') {
-        body.removeAttribute('data-theme');
-        localStorage.setItem('tema', 'light');
-      } else {
-        body.setAttribute('data-theme', 'dark');
-        localStorage.setItem('tema', 'dark');
-      }
-    }
+  <!-- MODAL DE SELEÇÃO DE WALLPAPER -->
+  <div id="modal-wallpaper">
+    <div class="wallpaper-box">
+      <h2>🎨 Escolha um Papel de Parede</h2>
+      <p style="font-size: 11px; color: #333; margin-bottom: 15px;">Clique no botão abaixo da imagem para escolher onde aplicar.</p>
+      <div class="wallpaper-grid">
+        
+        <!-- Opção 1: Miku -->
+        <div class="wallpaper-opcao" style="background-image: url('assets/miku.png')">
+          <div class="btn-aplicar">
+            <button onclick="aplicarWallpaper('miku.png', 'desktop')">🖥️ Desktop</button>
+            <button onclick="aplicarWallpaper('miku.png', 'sistema')">🌐 Sistema</button>
+          </div>
+        </div>
 
-    function aplicarTemaSalvo() {
-      const temaSalvo = localStorage.getItem('tema');
-      if (temaSalvo === 'dark') {
-        document.body.setAttribute('data-theme', 'dark');
-      }
-    }
+        <!-- Opção 2: Teto -->
+        <div class="wallpaper-opcao" style="background-image: url('assets/teto.png')">
+          <div class="btn-aplicar">
+            <button onclick="aplicarWallpaper('teto.png', 'desktop')">🖥️ Desktop</button>
+            <button onclick="aplicarWallpaper('teto.png', 'sistema')">🌐 Sistema</button>
+          </div>
+        </div>
 
-    // Aplica o tema assim que a página carrega
-    document.addEventListener('DOMContentLoaded', aplicarTemaSalvo);
-  </script>
-  <!-- SCRIPTS DO PROJETO (ORDEM IMPORTA!) -->
+        <!-- Opção 3: Vasto Lorde -->
+        <div class="wallpaper-opcao" style="background-image: url('assets/vasto-lorde.png')">
+          <div class="btn-aplicar">
+            <button onclick="aplicarWallpaper('vasto-lorde.png', 'desktop')">🖥️ Desktop</button>
+            <button onclick="aplicarWallpaper('vasto-lorde.png', 'sistema')">🌐 Sistema</button>
+          </div>
+        </div>
+
+      </div>
+      <button class="btn-fechar" onclick="fecharModalWallpaper()">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- SCRIPTS DO PROJETO -->
   <script src="js/models/NoTrie.js"></script>
   <script src="js/models/Trie.js"></script>
   <script src="js/tokenizer.js"></script>
@@ -275,6 +289,5 @@
   <script src="js/loja.js"></script>
   <script src="js/main.js"></script>
 
-  
 </body>
 </html>

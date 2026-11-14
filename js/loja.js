@@ -34,11 +34,28 @@ function produtoCombinaComBusca(produto, termo) {
   return termos.every(t => alvo.includes(t));
 }
 
-// ------------------------------------------------------------
-// AFINIDADE ENTRE PERFIL (TRIE) E PRODUTO
-// ------------------------------------------------------------
-// Soma o peso, na Trie, de cada token único do produto.
-// Só quem tem score > 0 aparece em "recomendados para você".
+// Raridade de cada token no catálogo (IDF): tokens presentes em muitos produtos
+// ("tecnologia", "esporte") valem pouco; tokens específicos ("nike") valem mais.
+function calcularIdfCatalogo() {
+  const frequencia = new Map();
+  CATALOGO.forEach(produto => {
+    new Set(tokenizar(produto.palavrasChave.join(' '))).forEach(token => {
+      frequencia.set(token, (frequencia.get(token) || 0) + 1);
+    });
+  });
+  const idf = new Map();
+  frequencia.forEach((qtd, token) => idf.set(token, Math.log(CATALOGO.length / qtd)));
+  return idf;
+}
+
+const IDF_CATALOGO = calcularIdfCatalogo();
+
+// Afinidade mínima para entrar em "recomendados". Sozinho, um token só passa
+// se aparecer em até ~√N produtos; tokens genéricos só passam se o interesse
+// for reforçado (várias fontes ou repetição, que aumentam o peso na Trie).
+const LIMIAR_RECOMENDACAO = 0.5 * Math.log(CATALOGO.length);
+
+// Soma, para cada token único do produto, peso na Trie × raridade no catálogo.
 function calcularAfinidade(produto, perfil) {
   const vistos = new Set();
   const correspondencias = [];
@@ -48,13 +65,13 @@ function calcularAfinidade(produto, perfil) {
     if (vistos.has(token)) return;
     vistos.add(token);
     const no = perfil.buscar(token);
-    if (no) {
-      score += no.pesoTotal;
-      correspondencias.push({ token, peso: no.pesoTotal });
-    }
+    if (!no) return;
+    const contribuicao = no.pesoTotal * (IDF_CATALOGO.get(token) || 0);
+    score += contribuicao;
+    correspondencias.push({ token, peso: no.pesoTotal, contribuicao });
   });
 
-  correspondencias.sort((a, b) => b.peso - a.peso);
+  correspondencias.sort((a, b) => b.contribuicao - a.contribuicao);
   return { score, correspondencias };
 }
 
@@ -105,11 +122,11 @@ function criarCardProduto({ produto, score, correspondencias }) {
     EMOJIS_CATEGORIA[produto.categoria] || '🛍️');
   card.appendChild(imagem);
 
-  if (score > 0) {
+  if (score >= LIMIAR_RECOMENDACAO) {
     card.appendChild(criarEl('div', 'ml-badge', '⭐ Recomendado'));
-    const combina = correspondencias.slice(0, 3).map(c => c.token).join(', ');
+    const combina = correspondencias.filter(c => c.contribuicao > 0).slice(0, 3).map(c => c.token).join(', ');
     const detalhe = criarEl('div', 'ml-combina', `Combina com: ${combina}`);
-    detalhe.title = correspondencias.map(c => `${c.token}: ${c.peso.toFixed(2)}`).join('\n')
+    detalhe.title = correspondencias.map(c => `${c.token}: ${c.contribuicao.toFixed(2)}`).join('\n')
       + `\nAfinidade total: ${score.toFixed(2)}`;
     card.appendChild(detalhe);
   }
@@ -154,7 +171,7 @@ function renderizarLoja() {
     .filter(produto => produtoCombinaComBusca(produto, termo))
     .map(produto => ({ produto, ...calcularAfinidade(produto, perfil) }));
 
-  if (abaLoja === 'recomendados') itens = itens.filter(item => item.score > 0);
+  if (abaLoja === 'recomendados') itens = itens.filter(item => item.score >= LIMIAR_RECOMENDACAO);
   itens.sort((a, b) => b.score - a.score);
 
   grid.innerHTML = '';

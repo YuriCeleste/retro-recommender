@@ -1,0 +1,189 @@
+/* ============================================================
+   MERCADO AZUL (protótipo)
+   Carregar DEPOIS do style.css para sobrescrever o layout antigo.
+   ============================================================ */
+#tela-loja.active {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 0;
+  overflow-y: auto;
+  background-color: #fff;
+}
+
+.ml-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 24px;
+  flex-shrink: 0;
+}
+
+.ml-logo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.ml-logo-pequeno { font-size: 15px; color: #222; }
+.ml-logo-grande  { font-size: 26px; color: #1a3cff; letter-spacing: 1px; }
+
+.ml-busca-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 3px;
+  border: 1px solid #222;
+  border-radius: 999px;
+  background-color: #fff;
+}
+
+.ml-busca-box input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 5px 12px;
+  font-size: 13px;
+  background: transparent;
+}
+
+.ml-btn-pesquisar {
+  padding: 5px 14px;
+  border: none;
+  border-radius: 999px;
+  background-color: #0033ff;
+  color: #fff;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.ml-carrinho {
+  padding: 5px 12px;
+  border: 1px solid #222;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* Abas */
+.ml-abas {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 10px 24px;
+  background-color: #8c9eff;
+  flex-shrink: 0;
+}
+
+.ml-aba {
+  padding: 5px 10px;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.55);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.ml-aba:first-child { flex: 1; }
+.ml-aba:last-child  { width: 200px; }
+
+.ml-aba.ativa {
+  background-color: #fff;
+  font-weight: bold;
+}
+
+/* Grade e cards */
+.ml-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  padding: 20px 28px;
+}
+
+.ml-vazio {
+  grid-column: 1 / -1;
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  padding: 30px 10px;
+}
+
+.ml-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ml-nome {
+  padding: 4px 6px;
+  background-color: #d9d9d9;
+  font-size: 12px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ml-imagem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+  font-size: 48px;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Capas por categoria (troque por url('../img/...') se tiver imagens) */
+.ml-cat-esporte     { background-image: linear-gradient(160deg, #cfe3ff, #7aa7ff); }
+.ml-cat-tecnologia  { background-image: linear-gradient(160deg, #d6dcff, #8a96ff); }
+.ml-cat-audio       { background-image: linear-gradient(160deg, #e3d4ff, #a78bfa); }
+.ml-cat-vestuario   { background-image: linear-gradient(160deg, #d4f1ff, #7cc7ee); }
+.ml-cat-acessorios  { background-image: linear-gradient(160deg, #dbe9f7, #94b4d6); }
+.ml-cat-informatica { background-image: linear-gradient(160deg, #d5e8ff, #6fa0e8); }
+.ml-cat-livros      { background-image: linear-gradient(160deg, #e0e6f5, #9aa9d6); }
+.ml-cat-cozinha     { background-image: linear-gradient(160deg, #d9efff, #86bde6); }
+.ml-cat-moveis      { background-image: linear-gradient(160deg, #dde5ee, #98a9bf); }
+.ml-cat-games       { background-image: linear-gradient(160deg, #cdd5ff, #6c7bff); }
+.ml-cat-fotografia  { background-image: linear-gradient(160deg, #d0eaff, #6bb6f0); }
+.ml-cat-suplementos { background-image: linear-gradient(160deg, #d8dfff, #8794f0); }
+
+.ml-badge {
+  padding: 3px 6px;
+  background-color: #ffcc00;
+  font-size: 10px;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.ml-combina {
+  font-size: 10px;
+  color: #444;
+  text-align: center;
+  cursor: help;
+}
+
+.ml-rodape {
+  display: flex;
+  gap: 6px;
+}
+
+.ml-preco {
+  flex: 1;
+  padding: 6px;
+  background-color: #d9d9d9;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ml-btn-carrinho {
+  width: 34px;
+  border: none;
+  background-color: #d9d9d9;
+  cursor: pointer;
+}
+
+.ml-btn-carrinho:hover:not(:disabled) { background-color: #b8c4ff; }
+.ml-btn-carrinho:disabled { cursor: default; color: #0a7a2f; font-weight: bold; }

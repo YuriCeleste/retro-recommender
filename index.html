@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/permagram.css">
   <link rel="stylesheet" href="css/superflix.css">
+  <link rel="stylesheet" href="css/loja.css">
 </head>
 <body>
 
@@ -144,14 +145,22 @@
 
         <!-- TELA 5: E-COMMERCE (MERCADO AZUL) - NOVO VISUAL -->
         <div id="tela-loja" class="page">
-          <div class="loja-header">
-            <h2 class="loja-logo">MERCADO AZUL</h2>
-            <span class="loja-usuario">Olá, <span id="loja-user">Usuário</span></span>
-          </div>
-          <div class="produtos-grid" id="grid-produtos"></div>
-          <div class="loja-footer">
-            <button class="btn-voltar" onclick="trocarTela('tela-home')">← Voltar para o Gugou</button>
-          </div>
+          <header class="ml-header">
+            <div class="ml-logo">
+              <span class="ml-logo-pequeno">mercadão</span>
+              <span class="ml-logo-grande">AZUL</span>
+            </div>
+            <div class="ml-busca-box">
+              <input type="text" id="ml-busca" placeholder="Buscar produtos..." autocomplete="off" oninput="renderizarLoja()">
+              <button type="button" class="ml-btn-pesquisar" onclick="pesquisarNaLoja()">pesquisar</button>
+            </div>
+            <div class="ml-carrinho" title="Produtos com interesse registrado">🛒 <span id="ml-carrinho-qtd">0</span></div>
+          </header>
+          <nav class="ml-abas">
+            <button type="button" class="ml-aba ativa" data-aba="recomendados" onclick="mudarAbaLoja('recomendados')">recomendados para você</button>
+            <button type="button" class="ml-aba" data-aba="todos" onclick="mudarAbaLoja('todos')">todos</button>
+          </nav>
+          <div class="ml-grid" id="ml-grid"></div>
         </div>
 
         <div id="tela-permagram" class="page">
@@ -229,6 +238,7 @@
   <script src="js/storage.js"></script>
   <script src="js/permagram.js"></script>
   <script src="js/superflix.js"></script>
+  <script src="js/loja.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

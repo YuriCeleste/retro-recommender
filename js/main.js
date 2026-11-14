@@ -7,7 +7,8 @@
 const CHAVES_DADOS = {
   buscas: 'retroRecommender.buscas.v1',
   produtos: 'retroRecommender.produtos.v1',
-  navegacao: 'retroRecommender.navegacao.v1'
+  navegacao: 'retroRecommender.navegacao.v1',
+  buscasLoja: 'retroRecommender.buscasLoja.v1',
 };
 
 const CHAVE_CONTAS = 'retroRecommender.contas.v1';
@@ -61,6 +62,7 @@ function salvarNavegacao() {
 }
 
 let buscasSalvas = [];
+let buscasLojaSalvas = [];
 let produtosSalvos = [];
 let historico = [];
 let indiceHistorico = -1;
@@ -71,6 +73,7 @@ function ativarDadosUsuario(usuario) {
   migrarDadosLegadosUsuario(usuario);
   buscasSalvas = carregarListaSalva(CHAVES_DADOS.buscas);
   produtosSalvos = carregarListaSalva(CHAVES_DADOS.produtos);
+  buscasLojaSalvas = carregarListaSalva(CHAVES_DADOS.buscasLoja);
   const navegacaoSalva = carregarNavegacaoSalva();
   historico = navegacaoSalva.historico;
   indiceHistorico = navegacaoSalva.indice;
@@ -81,6 +84,7 @@ function ativarDadosUsuario(usuario) {
 function limparDadosUsuario() {
   buscasSalvas = [];
   produtosSalvos = [];
+  buscasLojaSalvas = [];
   historico = [];
   indiceHistorico = -1;
   fecharPainelArvore();
@@ -254,63 +258,57 @@ function mostrarResultadosBusca(termo) {
 }
 
 // E-COMMERCE (MERCADO AZUL)
-function irParaLoja() {
-  trocarTela('tela-loja');
-  renderizarLoja();
-  // Adiciona o nome do usuário no canto
-  const usuario = localStorage.getItem('usuarioLogado') || 'Visitante';
-  const elUser = document.getElementById('loja-user');
-  if (elUser) elUser.textContent = usuario;
-}
+function irParaLoja() { trocarTela('tela-loja'); }
 
-function renderizarLoja() {
-  const grid = document.getElementById('grid-produtos');
-  if (!grid) return;
-  grid.innerHTML = "";
-  const perfil = criarPerfilUsuario();
-  const recomendados = CATALOGO.map(produto => {
-      let score = 0;
-      tokenizar(produto.palavrasChave.join(' ')).forEach(p => {
-          const no = perfil.buscar(p);
-          if (no) score += no.pesoTotal;
-      });
-      return { ...produto, score };
-  }).sort((a, b) => b.score - a.score);
+// function renderizarLoja() {
+//   const grid = document.getElementById('grid-produtos');
+//   if (!grid) return;
+//   grid.innerHTML = "";
+//   const perfil = criarPerfilUsuario();
+//   const recomendados = CATALOGO.map(produto => {
+//       let score = 0;
+//       tokenizar(produto.palavrasChave.join(' ')).forEach(p => {
+//           const no = perfil.buscar(p);
+//           if (no) score += no.pesoTotal;
+//       });
+//       return { ...produto, score };
+//   }).sort((a, b) => b.score - a.score);
 
-  recomendados.forEach(prod => {
-      const div = document.createElement('div');
-      div.className = 'card-produto';
-      const tagRecomendado = prod.score > 0 ? '<div class="badge-recomendacao">⭐ Recomendado</div>' : '';
-      div.innerHTML = `<h3>${prod.nome}</h3><p class="preco">R$ ${prod.preco.toFixed(2)}</p>${tagRecomendado}`;
-      const botaoInteresse = document.createElement('button');
-      botaoInteresse.className = 'btn-interesse';
-      botaoInteresse.type = 'button';
-      const interesseRegistrado = produtosSalvos.some(item => item.produtoId === prod.id);
-      botaoInteresse.textContent = interesseRegistrado ? 'Interesse registrado' : 'Tenho interesse';
-      botaoInteresse.disabled = interesseRegistrado;
-      botaoInteresse.addEventListener('click', () => registrarInteresseProduto(prod.id));
-      div.appendChild(botaoInteresse);
-      grid.appendChild(div);
-  });
-}
+//   recomendados.forEach(prod => {
+//       const div = document.createElement('div');
+//       div.className = 'card-produto';
+//       const tagRecomendado = prod.score > 0 ? '<div class="badge-recomendacao">⭐ Recomendado</div>' : '';
+//       div.innerHTML = `<h3>${prod.nome}</h3><p class="preco">R$ ${prod.preco.toFixed(2)}</p>${tagRecomendado}`;
+//       const botaoInteresse = document.createElement('button');
+//       botaoInteresse.className = 'btn-interesse';
+//       botaoInteresse.type = 'button';
+//       const interesseRegistrado = produtosSalvos.some(item => item.produtoId === prod.id);
+//       botaoInteresse.textContent = interesseRegistrado ? 'Interesse registrado' : 'Tenho interesse';
+//       botaoInteresse.disabled = interesseRegistrado;
+//       botaoInteresse.addEventListener('click', () => registrarInteresseProduto(prod.id));
+//       div.appendChild(botaoInteresse);
+//       grid.appendChild(div);
+//   });
+// }
 
 function criarPerfilUsuario() {
   const perfil = new Trie();
   buscasSalvas.forEach(busca => { busca.tokens.forEach(token => perfil.inserir(token, 'gugou', 1.2)); });
+  buscasLojaSalvas.forEach(busca => { busca.tokens.forEach(token => perfil.inserir(token, 'mercadoAzul', 1.2)); });
   produtosSalvos.forEach(interacao => { tokenizar(interacao.palavrasChave.join(' ')).forEach(token => { perfil.inserir(token, 'mercadoAzul', 1.0); }); });
   obterInteressesPermagram().forEach(interesse => { interesse.tokens.forEach(token => perfil.inserir(token, 'permagram', 1.1)); });
   obterInteressesSuperflix().forEach(interesse => { interesse.tokens.forEach(token => perfil.inserir(token, 'superflix', 1.0)); });
   return perfil;
 }
 
-function registrarInteresseProduto(produtoId) {
-  if (produtosSalvos.some(item => item.produtoId === produtoId)) return;
-  const produto = CATALOGO.find(item => item.id === produtoId);
-  if (!produto) throw new Error(`Produto não encontrado: ${produtoId}`);
-  produtosSalvos.push({ produtoId: produto.id, palavrasChave: produto.palavrasChave, data: Date.now() });
-  localStorage.setItem(chaveDadosUsuario(CHAVES_DADOS.produtos), JSON.stringify(produtosSalvos));
-  renderizarLoja();
-}
+// function registrarInteresseProduto(produtoId) {
+//   if (produtosSalvos.some(item => item.produtoId === produtoId)) return;
+//   const produto = CATALOGO.find(item => item.id === produtoId);
+//   if (!produto) throw new Error(`Produto não encontrado: ${produtoId}`);
+//   produtosSalvos.push({ produtoId: produto.id, palavrasChave: produto.palavrasChave, data: Date.now() });
+//   localStorage.setItem(chaveDadosUsuario(CHAVES_DADOS.produtos), JSON.stringify(produtosSalvos));
+//   renderizarLoja();
+// }
 
 // BUSCA NO GUGOU
 function fazerBusca() {
@@ -481,12 +479,14 @@ function renderizarArvorePerfil() {
 
 // ATALHOS DE TECLADO
 document.addEventListener('keydown', function(event) {
+  
   if (event.key === 'Escape' && !document.getElementById('painel-arvore-perfil').hidden) fecharPainelArvore();
-  else if (event.key === 'ArrowLeft') voltarPagina();
-  else if (event.key === 'ArrowRight') avancarPagina();
+  else if (!digitando && event.key === 'ArrowLeft') voltarPagina();
+  else if (!digitando && event.key === 'ArrowRight') avancarPagina();
   else if (event.key === 'Enter') {
     const inputBusca = document.getElementById('search-input');
-    if (document.activeElement === inputBusca) fazerBusca();
+    const digitando = ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName);
+    if (document.activeElement === inputBusca && digitando) fazerBusca();
   }
 });
 

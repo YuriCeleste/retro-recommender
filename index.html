@@ -179,6 +179,48 @@
         
       </div> <!-- Fim do browser-content -->
     </div> <!-- Fim do browser-window -->
+    <div id="arvore-backdrop" class="arvore-backdrop" onclick="fecharPainelArvore()" hidden></div>
+    <button id="btn-arvore-perfil" type="button" aria-label="Abrir árvore do perfil" title="Árvore do perfil"
+      aria-controls="painel-arvore-perfil" aria-expanded="false" onclick="alternarPainelArvore()" hidden>
+      <span aria-hidden="true">🌳</span>
+    </button>
+    <section id="painel-arvore-perfil" class="painel-arvore-perfil"
+      role="dialog" aria-modal="true" aria-labelledby="titulo-arvore-perfil" hidden>
+      <header class="painel-arvore-cabecalho">
+        <div class="arvore-marca" aria-hidden="true">🌿</div>
+        <div class="arvore-titulo">
+          <p>VISUALIZAÇÃO DO PERFIL</p>
+          <h2 id="titulo-arvore-perfil">Árvore Trie de interesses</h2>
+        </div>
+        <div class="arvore-acoes">
+          <button type="button" aria-label="Atualizar árvore" title="Atualizar árvore"
+            onclick="renderizarArvorePerfil()">↻</button>
+          <button id="btn-fechar-arvore" type="button" aria-label="Fechar árvore" title="Fechar"
+            onclick="fecharPainelArvore()">×</button>
+        </div>
+      </header>
+      <div class="arvore-resumo">
+        <div class="arvore-conta">
+          <span>Conta ativa</span>
+          <strong id="arvore-usuario"></strong>
+        </div>
+        <div class="arvore-estatistica">
+          <strong id="arvore-contagem-termos">0</strong>
+          <span>termos</span>
+        </div>
+        <div class="arvore-estatistica">
+          <strong id="arvore-contagem-fontes">0</strong>
+          <span>fontes</span>
+        </div>
+      </div>
+      <div id="conteudo-arvore-perfil" class="conteudo-arvore-perfil"></div>
+      <footer class="arvore-legenda">
+        <span><i class="legenda-no-caractere"></i>Nó de caractere</span>
+        <span><i class="legenda-no-palavra">✓</i>Palavra completa</span>
+        <span><i class="legenda-escala-peso"></i>Cor mais intensa = maior peso</span>
+        <span class="arvore-legenda-ajuda">Role para explorar toda a árvore</span>
+      </footer>
+    </section>
   </div> <!-- Fim do desktop -->
 
   <!-- SCRIPTS DO PROJETO (ORDEM IMPORTA!) -->

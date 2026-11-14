@@ -11,7 +11,8 @@
 const EMOJIS_CATEGORIA = {
   'Esporte': '🏃', 'Tecnologia': '⌚', 'Áudio': '🎧', 'Vestuário': '👕',
   'Acessórios': '🎒', 'Informática': '🖱️', 'Livros': '📚', 'Cozinha': '☕',
-  'Móveis': '🪑', 'Games': '🎮', 'Fotografia': '📷', 'Suplementos': '💪'
+  'Móveis': '🪑', 'Games': '🎮', 'Fotografia': '📷', 'Suplementos': '💪',
+  'Música': '🎸', 'Beleza': '💄'
 };
 
 let abaLoja = 'recomendados'; // 'recomendados' | 'todos'
@@ -30,10 +31,13 @@ function slugCategoria(categoria) {
 function produtoCombinaComBusca(produto, termo) {
   const termos = normalizarTexto(termo).split(/\s+/).filter(Boolean);
   if (termos.length === 0) return true;
-  const alvo = normalizarTexto([produto.nome, produto.categoria, ...produto.palavrasChave].join(' '));
+  const alvo = normalizarTexto([produto.nome, produto.marca, produto.categoria, ...produto.palavrasChave].join(' '));
   return termos.every(t => alvo.includes(t));
 }
 
+// ------------------------------------------------------------
+// AFINIDADE ENTRE PERFIL (TRIE) E PRODUTO
+// ------------------------------------------------------------
 // Raridade de cada token no catálogo (IDF): tokens presentes em muitos produtos
 // ("tecnologia", "esporte") valem pouco; tokens específicos ("nike") valem mais.
 function calcularIdfCatalogo() {

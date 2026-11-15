@@ -336,9 +336,9 @@ body {
 .arvore-svg-edge { fill: none; stroke: #afc1d5; stroke-linecap: round; stroke-width: 2.5; }
 .arvore-svg-edge-palavra { stroke: #8db9a0; stroke-dasharray: 5 5; }
 .arvore-svg-caractere circle { fill: #fff; stroke: #8fa9c5; stroke-width: 2; filter: drop-shadow(0 3px 4px rgba(34, 57, 84, 0.16)); }
-.arvore-svg-caractere text { fill: #285d8c; font-family: 'Courier New', Courier, monospace; font-size: 16px; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
-.arvore-svg-raiz circle { fill: #285d8c; stroke: #1c466f; }
-.arvore-svg-raiz text { fill: #fff; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; font-size: 11px; }
+.arvore-svg-caractere text { fill: #000; font-family: 'Courier New', Courier, monospace; font-size: 16px; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
+.arvore-svg-raiz circle { fill: #000000; stroke: #1c466f; }
+.arvore-svg-raiz text { fill: #000; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; font-size: 11px; }
 .arvore-svg-palavra rect { fill: #eff8f2; stroke: #9dcdb0; stroke-width: 1.5; filter: drop-shadow(0 3px 5px rgba(35, 91, 62, 0.12)); }
 .arvore-svg-palavra .arvore-svg-termo { fill: #216346; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; font-size: 13px; font-weight: 700; text-anchor: middle; }
 .arvore-svg-palavra .arvore-svg-detalhe { fill: #111827; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; font-size: 9px; text-anchor: middle; }

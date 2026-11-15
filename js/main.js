@@ -439,7 +439,7 @@ function desenharNoTrie(svg, no) {
     grupo.appendChild(criarElementoSvg('title', {}, no.tipo === 'raiz' ? `Raiz da Trie · maior peso descendente ${no.peso.toFixed(2)}` : `Prefixo: ${no.prefixo} · maior peso descendente ${no.peso.toFixed(2)}`));
     grupo.setAttribute('data-peso', no.peso.toFixed(2));
     grupo.appendChild(criarElementoSvg('circle', { cx: 0, cy: 0, r: raio, style: `fill:${misturarCores('#ffffff', '#15803d', no.intensidade)};stroke:${misturarCores('#8fa9c5', '#14532d', no.intensidade)}` }));
-    grupo.appendChild(criarElementoSvg('text', { x: 0, y: 0, style: `fill:${misturarCores('#285d8c', '#ffffff', intensidadeTexto(no.intensidade))}` }, no.tipo === 'raiz' ? 'raiz' : no.caractere));
+    grupo.appendChild(criarElementoSvg('text', { x: 0, y: 0 }, no.tipo === 'raiz' ? 'raiz' : no.caractere));
   }
   svg.appendChild(grupo);
 }
@@ -465,19 +465,19 @@ function renderizarArvorePerfil() {
   const totalFolhas = contarFolhasTrie(perfil.raiz, folhasPorNo);
   maiorPesoTrie(perfil.raiz, pesosPorNo);
   const larguraDisponivel = conteudo.clientWidth || window.innerWidth;
-  const margem = 70;
-  const larguraFolha = Math.max(220, (larguraDisponivel - margem * 2) / totalFolhas);
+  const larguraFolha = 210; // fixa e compacta: só o necessário para a caixa da palavra
+  const larguraArvore = totalFolhas * larguraFolha;
+  const margem = Math.max(70, (larguraDisponivel - larguraArvore) / 2); // centraliza a árvore
   const alturaNiveis = profundidadeMaximaTrie(perfil.raiz);
-  const layout = { margem, larguraFolha, topo: 64, distanciaNiveis: 80 };
-  const largura = Math.max(larguraDisponivel, margem * 2 + totalFolhas * larguraFolha);
+  const layout = { margem, larguraFolha, topo: 64, distanciaNiveis: 76 };
+  const largura = Math.max(larguraDisponivel, margem * 2 + larguraArvore);
   const altura = layout.topo + (alturaNiveis + 1) * layout.distanciaNiveis + 76;
   const arvore = criarLayoutTrie(perfil.raiz, folhasPorNo, pesosPorNo, layout);
   const svg = criarElementoSvg('svg', { class: 'arvore-svg', role: 'img', 'aria-label': `Árvore Trie com ${palavras.length} termos`, width: largura, height: altura, viewBox: `0 0 ${largura} ${altura}` });
   arvore.arestas.forEach(aresta => {
     const inicioY = aresta.de.y + (aresta.de.tipo === 'raiz' ? 26 : 20);
     const fimY = aresta.para.y - (aresta.palavra ? 30 : 20);
-    const meioY = (inicioY + fimY) / 2;
-    const caminho = `M ${aresta.de.x} ${inicioY} C ${aresta.de.x} ${meioY}, ${aresta.para.x} ${meioY}, ${aresta.para.x} ${fimY}`;
+    const caminho = `M ${aresta.de.x} ${inicioY} L ${aresta.para.x} ${fimY}`;
     svg.appendChild(criarElementoSvg('path', { class: `arvore-svg-edge${aresta.palavra ? ' arvore-svg-edge-palavra' : ''}`, style: `stroke:${misturarCores(aresta.palavra ? '#8db9a0' : '#afc1d5', '#15803d', aresta.para.intensidade)}`, d: caminho }));
   });
   arvore.nos.forEach(no => desenharNoTrie(svg, no));
